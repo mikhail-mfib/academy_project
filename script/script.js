@@ -21,10 +21,10 @@ window.addEventListener('DOMContentLoaded', (evt) => {
             if (evt.deltaY < 0 && currentSection.previousElementSibling) {
                 targetID = '#' + currentSection.previousElementSibling.id;
             }
-            if (evt.deltaY > 0 && currentSection.nextElementSibling) {
+            if (evt.deltaY > 0 && currentSection.nextElementSibling.id !== '') {
                 targetID = '#' + currentSection.nextElementSibling.id;
             }
-
+            
             return targetID;
         };
 
