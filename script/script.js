@@ -1,6 +1,6 @@
 'use strict';
 
-window.addEventListener('DOMContentLoaded', (evt) => {
+window.addEventListener('DOMContentLoaded', () => {
     //слайдер экранов
     const slider = () => {
         //поиск всех постраничных ссылок и секций, которые будут в кач-ве слайдов
@@ -28,7 +28,7 @@ window.addEventListener('DOMContentLoaded', (evt) => {
             return targetID;
         };
 
-        //функция для плавной анимации прокрутки
+        //функция для анимации плавной прокрутки
         const scroll = (target) => {
             if(!target) {return;}
 
@@ -39,8 +39,6 @@ window.addEventListener('DOMContentLoaded', (evt) => {
             let start = null,
                 progress,
                 step;
-            
-            changeActiveSection(targetSection);
 
             const scrollStep = (time) => {
                 if (start === null) {start = time;}
@@ -57,6 +55,7 @@ window.addEventListener('DOMContentLoaded', (evt) => {
             };
         
             requestAnimationFrame(scrollStep);
+            changeActiveSection(targetSection);
         };
 
         pageLinks.forEach(function(link) {
@@ -70,9 +69,49 @@ window.addEventListener('DOMContentLoaded', (evt) => {
 
         window.addEventListener('wheel', (evt) => {
             evt.preventDefault();
+
             scroll(defineSectionToScroll(evt));
         }, {passive: false});
     };
 
     slider();
+
+    //отображение/скрытие мини меню
+    const toggleMiniMenu = () => {
+        const target = document.getElementById('main'),
+              miniMenu = target.querySelector('.two-mini'),
+              observerConfig = {attributes: true};
+
+        const observer = new MutationObserver(() => {
+            miniMenu.classList.toggle('d-none');
+        });
+
+        observer.observe(target, observerConfig);
+    };
+
+    toggleMiniMenu();
+
+    //popup support
+    const popupSupport = () => {
+        const supportBtn = document.querySelector('.main-support'),
+              modalSupport = document.querySelector('.modal_support');
+              
+        const handlerClass = (target, className) => {
+                target.classList.toggle(className);
+              };
+
+        supportBtn.addEventListener('click', () => {
+            handlerClass(modalSupport, 'd-none');
+            handlerClass(supportBtn, 'd-none');
+        });
+
+        modalSupport.addEventListener('click', (evt) => {
+            if(!evt.target.closest('.modal-dialog') || evt.target.matches(`img[aria-label='Close']`)) {
+                handlerClass(modalSupport, 'd-none');
+                handlerClass(supportBtn, 'd-none');
+            }
+        });
+    };
+
+    popupSupport();
 });
