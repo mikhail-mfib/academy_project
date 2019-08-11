@@ -14,25 +14,25 @@ window.addEventListener('DOMContentLoaded', (evt) => {
             currentSection = section;
         };
 
-        //определение
-        const defineVScroll = (evt) => {
-            let v;
+        //определение id секции, к которой будет переход по скролу
+        const defineSectionToScroll = (evt) => {
+            let targetID;
 
             if (evt.deltaY < 0 && currentSection.previousElementSibling) {
-                v = '#' + currentSection.previousElementSibling.id;
+                targetID = '#' + currentSection.previousElementSibling.id;
             }
             if (evt.deltaY > 0 && currentSection.nextElementSibling) {
-                v = '#' + currentSection.nextElementSibling.id;
+                targetID = '#' + currentSection.nextElementSibling.id;
             }
 
-            return v;
+            return targetID;
         };
 
         //функция для плавной анимации прокрутки
         const scroll = (target) => {
             if(!target) {return;}
 
-            const targetSection = target.hash ? document.querySelector(target.hash) : document.querySelector(target),
+            const targetSection = document.querySelector(target),
                   targetY = targetSection.getBoundingClientRect().top,
                   currentScroll = window.pageYOffset;
             
@@ -47,9 +47,9 @@ window.addEventListener('DOMContentLoaded', (evt) => {
                 
                 progress = time - start;
 
-                if(targetY < 0) {step = Math.max(currentScroll - progress, currentScroll + targetY);
-                } else {step = Math.min(currentScroll + progress, currentScroll + targetY);}
-                
+                if(targetY < 0) {step = Math.max(currentScroll - progress * 2, currentScroll + targetY);
+                } else {step = Math.min(currentScroll + progress * 2, currentScroll + targetY);}
+
                 window.scrollTo(0, step);
                 
                 if (step != currentScroll + targetY) {requestAnimationFrame(scrollStep);
@@ -59,23 +59,18 @@ window.addEventListener('DOMContentLoaded', (evt) => {
             requestAnimationFrame(scrollStep);
         };
 
-        //определение прыд/след секции
-        const smth = () => {
-
-        };
-
         pageLinks.forEach(function(link) {
             link.addEventListener('click', function(evt) {
               evt.preventDefault();
               
               let target = evt.target.closest('a');
-              scroll(target);
+              scroll(target.hash);
             });
         });
 
         window.addEventListener('wheel', (evt) => {
             evt.preventDefault();
-            scroll(defineVScroll(evt));
+            scroll(defineSectionToScroll(evt));
         }, {passive: false});
     };
 
