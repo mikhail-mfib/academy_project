@@ -45,10 +45,10 @@ window.addEventListener('DOMContentLoaded', (evt) => {
             const scrollStep = (time) => {
                 if (start === null) {start = time;}
                 
-                progress = time - start;
+                progress = (time - start) * 2;
 
-                if(targetY < 0) {step = Math.max(currentScroll - progress * 2, currentScroll + targetY);
-                } else {step = Math.min(currentScroll + progress * 2, currentScroll + targetY);}
+                if(targetY < 0) {step = Math.max(currentScroll - progress, currentScroll + targetY);
+                } else {step = Math.min(currentScroll + progress, currentScroll + targetY);}
 
                 window.scrollTo(0, step);
                 
