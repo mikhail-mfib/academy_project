@@ -21,7 +21,7 @@ const calc = () => {
             return input.checked;
         })[0].value.slice(0,2).trim();
 
-        selectedPeriod = selectedPeriod == 12 ? selectedPeriod * 0.9 : selectedPeriod;
+        selectedPeriod = selectedPeriod == 12 ? Math.round(selectedPeriod * 0.9) : selectedPeriod;
 
         let total = userPriceQty * selectedPeriod;
 
