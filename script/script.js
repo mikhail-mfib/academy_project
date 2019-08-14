@@ -4,7 +4,7 @@ window.addEventListener('DOMContentLoaded', () => {
     //слайдер экранов
     const slider = () => {
         //поиск всех постраничных ссылок и секций, которые будут в кач-ве слайдов
-        const   pageLinks = document.querySelectorAll(`a[href^='#']`);
+        const pageLinks = document.querySelectorAll(`a[href^='#']`);
         let currentSection = document.querySelector('.active');
         
         //присваиваение класса секции, к которой был переход
@@ -154,26 +154,39 @@ window.addEventListener('DOMContentLoaded', () => {
     const popupOffer = () => {
         const offerBtns = document.querySelectorAll('.main-try'),
               modalOffer = document.querySelector('.modal_offer'),
-              modalSupport = document.querySelector('.modal_support');
-
-        let countBtnClick = 0;
+              modalSupport = document.querySelector('.modal_support'),
+              footerY = document.querySelector('footer').getBoundingClientRect().height,
+              mapY = document.getElementById('map').getBoundingClientRect().height,
+              endSlideY = footerY + mapY;
         
+        let modalPopupCount = 0;
+              
         const handlerClass = (target, className) => {
             target.classList.toggle(className);
+            modalPopupCount++;
         };
 
-        //попап через 60сек
+        //popup через 60сек
         setTimeout(() => {
-            if(modalOffer.classList.contains('d-none') && modalSupport.classList.contains('d-none')) {
+            if(modalOffer.classList.contains('d-none') && 
+               modalSupport.classList.contains('d-none') &&
+               modalPopupCount === 0) 
+            {
                 handlerClass(modalOffer, 'd-none');
             }
         }, 60 * 1000);
+        //popup при пролистывании до конца
+        const popupEndSlide = () => {
+            if(document.body.offsetHeight - window.scrollY <= endSlideY && modalPopupCount === 0) {
+                handlerClass(modalOffer, 'd-none');
+                window.removeEventListener('scroll', popupEndSlide);
+            }
+        };
 
         offerBtns.forEach((offerBtn) => {
             offerBtn.addEventListener('click', (evt) => {
                 if(!evt.target.closest('#eleven')) {
                     handlerClass(modalOffer, 'd-none');
-                    countBtnClick++;
                 }
             });
         });
@@ -183,6 +196,8 @@ window.addEventListener('DOMContentLoaded', () => {
                 handlerClass(modalOffer, 'd-none');
             }
         });
+
+        window.addEventListener('scroll', popupEndSlide);
     };
 
     popupOffer();
@@ -402,7 +417,17 @@ window.addEventListener('DOMContentLoaded', () => {
                 evt.target.value = evt.target.value.replace(/[а-я]/gi, '');
             }
         });
-    
+        
+        const postDate = (body) => {
+            return fetch('./server.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            });
+        };
+
         document.body.addEventListener('submit', (evt) => {
             let target;
     
@@ -441,17 +466,6 @@ window.addEventListener('DOMContentLoaded', () => {
                 
             }
         });
-    
-    
-        const postDate = (body) => {
-            return fetch('./server.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(body)
-            });
-        };
     };
 
     sendForm();
